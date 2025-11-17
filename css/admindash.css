@@ -1,0 +1,150 @@
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: #f4f6f9;
+  color: #333;
+}
+
+/* Header */
+.header {
+  background: #2c3e50;
+  color: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header .u-name {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.logout-btn {
+  background: #e74c3c;
+  padding: 8px 15px;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: #c0392b;
+}
+
+/* Container */
+.container {
+  display: flex;
+  min-height: calc(100vh - 60px);
+}
+
+/* Sidebar */
+.side-bar {
+  width: 230px;
+  background: #34495e;
+  padding: 20px 0;
+  color: white;
+}
+
+.user-p {
+  text-align: center;
+  padding: 15px 0;
+}
+
+.user-p img {
+  width: 80px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.user-p h4 {
+  margin-bottom: 5px;
+  color: #ecf0f1;
+}
+
+.user-p span {
+  font-size: 14px;
+  color: #bdc3c7;
+}
+
+/* Sidebar menu */
+.side-bar ul {
+  list-style: none;
+}
+
+.side-bar ul li {
+  padding: 12px 20px;
+}
+
+.side-bar ul li a {
+  text-decoration: none;
+  color: #ecf0f1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s;
+}
+
+.side-bar ul li:hover {
+  background: #1abc9c;
+}
+
+.side-bar ul li a i {
+  font-size: 18px;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  padding: 25px;
+}
+
+.main-content h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.main-content p {
+  color: #555;
+  margin-bottom: 25px;
+}
+
+/* Cards */
+.cards {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  flex: 1;
+  min-width: 200px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #34495e;
+}
+
+.card p {
+  font-size: 22px;
+  font-weight: bold;
+  color: #16a085;
+}

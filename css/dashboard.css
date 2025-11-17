@@ -1,0 +1,188 @@
+/* ====== GLOBAL ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', Arial, sans-serif;
+}
+
+body {
+  background: #f8f9fb;
+  color: #333;
+  overflow-x: hidden;
+}
+
+/* ====== DASHBOARD LAYOUT ====== */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ====== SIDEBAR ====== */
+.sidebar {
+  width: 250px;
+  background: #1a1d24;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+}
+
+.sidebar h2 {
+  text-align: center;
+  margin: 25px 0;
+  font-size: 22px;
+  color: #00d084;
+  letter-spacing: 1px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0 10px;
+}
+
+.sidebar ul li {
+  margin: 8px 0;
+}
+
+.sidebar ul li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-radius: 8px;
+  color: #bbb;
+  text-decoration: none;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+  background: #00d084;
+  color: #fff;
+}
+
+.sidebar ul li a i {
+  font-size: 16px;
+}
+
+/* ====== LOGOUT SECTION ====== */
+.sidebar .logout {
+  margin-top: auto;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 20px 10px;
+}
+
+.sidebar .logout a {
+  color: #ff5f5f;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s;
+}
+
+.sidebar .logout a:hover {
+  color: #fff;
+}
+
+/* ====== MAIN CONTENT ====== */
+.main-content {
+  margin-left: 250px;
+  flex: 1;
+  padding: 30px;
+}
+
+header {
+  margin-bottom: 30px;
+}
+
+header h1 {
+  font-size: 28px;
+  color: #222;
+}
+
+header p {
+  font-size: 15px;
+  color: #666;
+}
+
+/* ====== CARDS ====== */
+.content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+.card h3 {
+  color: #00d084;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.card p {
+  color: #555;
+  font-size: 14px;
+}
+
+/* ====== PENDING MESSAGE ====== */
+.pending-message {
+  background: #fff8e6;
+  border-left: 5px solid #ffb703;
+  padding: 25px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.pending-message h3 {
+  color: #b87b00;
+  margin-bottom: 10px;
+}
+
+.pending-message ul {
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+.pending-message ul li {
+  color: #555;
+  margin-bottom: 5px;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    box-shadow: none;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .content {
+    grid-template-columns: 1fr;
+  }
+}
