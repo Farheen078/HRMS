@@ -15,8 +15,8 @@ $result = $conn->query($sql);
 $employee = $result->fetch_assoc();
 $employee_id = $employee['id'];
 
-// Fetch payslips for this employee
-$payslips_sql = "SELECT * FROM payslips WHERE employee_id = '$employee_id' ORDER BY year DESC, month DESC";
+// Fetch ONLY PAID payslips for this employee
+$payslips_sql = "SELECT * FROM payslips WHERE employee_id = '$employee_id' AND status = 'Paid' ORDER BY year DESC, month DESC";
 $payslips_result = $conn->query($payslips_sql);
 ?>
 
@@ -72,10 +72,6 @@ $payslips_result = $conn->query($payslips_sql);
             color: #27ae60; 
             font-weight: bold;
          }
-        .status-unpaid {
-             color: #e74c3c;
-              font-weight: bold;
-             }
         .btn {
              padding: 8px 15px;
               border: none; 
@@ -132,10 +128,10 @@ $payslips_result = $conn->query($payslips_sql);
                             <tr>
                                 <td><?php echo $payslip['month']; ?></td>
                                 <td><?php echo $payslip['year']; ?></td>
-                                <td>₹<?php echo number_format($payslip['total_salary'], 2); ?></td>
-                                <td>₹<?php echo number_format($payslip['deduction'], 2); ?></td>
-                                <td>₹<?php echo number_format($payslip['net_salary'], 2); ?></td>
-                                <td class="status-<?php echo strtolower($payslip['status']); ?>">
+                                <td>Rs.<?php echo number_format($payslip['total_salary'], 2); ?></td>
+                                <td>Rs.<?php echo number_format($payslip['deduction'], 2); ?></td>
+                                <td>Rs.<?php echo number_format($payslip['net_salary'], 2); ?></td>
+                                <td class="status-paid">
                                     <?php echo $payslip['status']; ?>
                                 </td>
                                 <td>
@@ -147,7 +143,7 @@ $payslips_result = $conn->query($payslips_sql);
                                             <i class="fas fa-download"></i> Download PDF
                                         </a>
                                     <?php else: ?>
-                                        <span class="btn btn-disabled">No PDF</span>
+                                        <span class="btn btn-disabled">PDF Not Available</span>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -158,7 +154,7 @@ $payslips_result = $conn->query($payslips_sql);
                 <div class="no-data">
                     <i class="fas fa-file-invoice-dollar" style="font-size: 48px;"></i>
                     <h3>No Salary Records Found</h3>
-                    <p>Your salary records will appear here once they are processed by admin.</p>
+                    <p>Your paid salary slips will appear here once they are processed by admin.</p>
                 </div>
             <?php endif; ?>
 

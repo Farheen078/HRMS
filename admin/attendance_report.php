@@ -83,18 +83,18 @@ $stats = $stats_result->fetch_assoc();
     <style>
         * { 
             margin: 0;
-             padding: 0; 
-             box-sizing: border-box; 
-             font-family: Arial, sans-serif; 
-            }
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: Arial, sans-serif; 
+        }
         body { 
             background: #f4f4f9; 
             padding: 20px; 
         }
         .container {
-             max-width: 1400px; 
-             margin: 0 auto; 
-            }
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
         .header { 
             background: #34495e; 
             color: white; 
@@ -114,11 +114,11 @@ $stats = $stats_result->fetch_assoc();
             margin-bottom: 20px; 
         }
         .filter-row {
-             display: flex; 
-             gap: 15px; 
-             margin-bottom: 15px; 
-             flex-wrap: wrap; 
-            }
+            display: flex; 
+            gap: 15px; 
+            margin-bottom: 15px; 
+            flex-wrap: wrap; 
+        }
         .filter-group { 
             flex: 1; 
             min-width: 200px; 
@@ -131,18 +131,20 @@ $stats = $stats_result->fetch_assoc();
         }
         input, select { 
             width: 100%; 
-            padding: 8px; 
+            padding: 10px; 
             border: 1px solid #ddd; 
             border-radius: 4px; 
+            font-size: 14px;
         }
         button {
-             background: #3498db; 
-             color: white; 
-             padding: 8px 20px; 
-             border: none; 
-             border-radius: 4px; 
-             cursor: pointer; 
-            }
+            background: #3498db; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 14px;
+        }
         .stats { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
@@ -150,17 +152,17 @@ $stats = $stats_result->fetch_assoc();
             margin-bottom: 20px; 
         }
         .stat-card {
-             background: white; 
-             padding: 15px; 
-             border-radius: 5px; 
-             text-align: center; 
-             border-left: 4px solid #3498db; 
-             box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-            }
+            background: white; 
+            padding: 20px; 
+            border-radius: 5px; 
+            text-align: center; 
+            border-left: 4px solid #3498db; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
         .stat-card h3 { 
             color: #2c3e50; 
             font-size: 14px; 
-            margin-bottom: 5px; 
+            margin-bottom: 10px; 
         }
         .stat-card p { 
             font-size: 24px; 
@@ -173,24 +175,26 @@ $stats = $stats_result->fetch_assoc();
             margin-top: 20px; 
         }
         th, td { 
-            padding: 12px; 
+            padding: 15px; 
             text-align: left; 
             border-bottom: 1px solid #ddd;
-         }
+            text-align: center;
+        }
         th { 
             background: #2c3e50; 
             color: white; 
             position: sticky; 
             top: 0; 
+            font-weight: bold;
         }
         .status-present { 
             color: #27ae60; 
             font-weight: bold; 
         }
         .status-absent {
-             color: #e74c3c; 
-             font-weight: bold; 
-            }
+            color: #e74c3c; 
+            font-weight: bold; 
+        }
         .status-half_day { 
             color: #f39c12; 
             font-weight: bold; 
@@ -198,21 +202,31 @@ $stats = $stats_result->fetch_assoc();
         .back-btn { 
             display: inline-block; 
             margin-top: 20px; 
-            padding: 10px 20px; 
+            padding: 12px 25px; 
             background: #95a5a6; 
             color: white; 
             text-decoration: none; 
             border-radius: 5px; 
+            font-size: 14px;
         }
         .no-data { 
             text-align: center;
-             padding: 40px; 
-             color: #7f8c8d;
-             }
-        .export-btn {
-             background: #27ae60; 
-             margin-left: 10px; 
-            }
+            padding: 40px; 
+            color: #7f8c8d;
+        }
+        .clear-btn {
+            background: #95a5a6; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+            text-decoration: none; 
+            color: white;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .employee-name {
+            text-align: left;
+            padding-left: 20px;
+        }
     </style>
 </head>
 <body>
@@ -252,7 +266,7 @@ $stats = $stats_result->fetch_assoc();
                             <button type="submit">
                                 <i class="fas fa-filter"></i> Apply Filters
                             </button>
-                            <a href="attendance_report.php" class="export-btn" style="background: #95a5a6; padding: 8px 20px; border-radius: 4px; text-decoration: none; color: white;">
+                            <a href="attendance_report.php" class="clear-btn">
                                 <i class="fas fa-times"></i> Clear
                             </a>
                         </div>
@@ -286,20 +300,18 @@ $stats = $stats_result->fetch_assoc();
                     <table>
                         <thead>
                             <tr>
-                                <th>Employee Name</th>
+                                <th class="employee-name">Employee Name</th>
                                 <th>Emp Code</th>
                                 <th>Department</th>
                                 <th>Date</th>
                                 <th>Day</th>
                                 <th>Status</th>
-                                <th>Check In</th>
-                                <th>Check Out</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php while($row = $result->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?php echo $row['fullname']; ?></td>
+                                    <td class="employee-name"><?php echo $row['fullname']; ?></td>
                                     <td><?php echo $row['emp_code']; ?></td>
                                     <td><?php echo $row['department_name'] ?: 'N/A'; ?></td>
                                     <td><?php echo $row['date']; ?></td>
@@ -313,8 +325,6 @@ $stats = $stats_result->fetch_assoc();
                                             }
                                         ?>
                                     </td>
-                                    <td><?php echo $row['check_in'] ? $row['check_in'] : 'N/A'; ?></td>
-                                    <td><?php echo $row['check_out'] ? $row['check_out'] : 'N/A'; ?></td>
                                 </tr>
                             <?php endwhile; ?>
                         </tbody>
@@ -326,15 +336,17 @@ $stats = $stats_result->fetch_assoc();
                 </div>
             <?php else: ?>
                 <div class="no-data">
-                    <i class="fas fa-calendar-times" style="font-size: 48px;"></i>
+                    <i class="fas fa-calendar-times" style="font-size: 48px; margin-bottom: 15px;"></i>
                     <h3>No Attendance Records Found</h3>
                     <p>No attendance records match your current filters.</p>
                 </div>
             <?php endif; ?>
 
-            <a href="../admin_dashboard.php" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Back to Dashboard
-            </a>
+            <div style="text-align: center;">
+                <a href="../admin_dashboard.php" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
         </div>
     </div>
 

@@ -11,7 +11,6 @@ $user_id = $_SESSION['user_id'];
 $error = "";
 $att_result = null;
 
-
 $sql = "SELECT e.id FROM employees e WHERE e.user_id='$user_id'";
 $result = $conn->query($sql);
 
@@ -37,76 +36,88 @@ if ($result && $result->num_rows > 0) {
     <style>
         * { 
             margin: 0;
-             padding: 0; 
-             box-sizing: border-box; 
-             font-family: Arial, sans-serif;
-             }
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: Arial, sans-serif;
+        }
         body {
-             background: #f4f4f9; 
-             padding: 20px;
-             }
+            background: #f4f4f9; 
+            padding: 20px;
+        }
         .container {
-             max-width: 1000px;
-              margin: 0 auto; 
-            }
+            max-width: 900px;
+            margin: 0 auto; 
+        }
         .header {
-             background: #34495e; 
-             color: white; 
-             padding: 20px; 
-             border-radius: 10px 10px 0 0; 
-            }
+            background: #34495e; 
+            color: white; 
+            padding: 20px; 
+            border-radius: 10px 10px 0 0; 
+        }
         .content {
-             background: white; 
-             padding: 20px; 
-             border-radius: 0 0 10px 10px; 
-             box-shadow: 0 0 10px rgba(0,0,0,0.1); 
-            }
+            background: white; 
+            padding: 20px; 
+            border-radius: 0 0 10px 10px; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+        }
         table { 
             width: 100%; 
             border-collapse: collapse; 
             margin-top: 20px; 
         }
         th, td { 
-            padding: 12px; 
-            text-align: left; 
+            padding: 15px; 
+            text-align: center; 
             border-bottom: 1px solid #ddd; 
         }
         th { 
             background: #2c3e50; 
             color: white; 
+            font-weight: bold;
         }
         .status-present {
-             color: #27ae60; 
-             font-weight: bold; 
-            }
+            color: #27ae60; 
+            font-weight: bold; 
+        }
         .status-absent {
-             color: #e74c3c; 
-             font-weight: bold; 
-            }
+            color: #e74c3c; 
+            font-weight: bold; 
+        }
         .status-half_day {
-             color: #f39c12; 
-             font-weight: bold; 
-            }
+            color: #f39c12; 
+            font-weight: bold; 
+        }
         .back-btn {
-             display: inline-block;
-              margin-top: 20px;
-               padding: 10px 20px; 
-               background: #95a5a6; 
-               color: white; 
-               text-decoration: none; 
-               border-radius: 5px; 
-            }
+            display: inline-block; 
+            margin-top: 20px; 
+            padding: 12px 25px; 
+            background: #95a5a6; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            font-size: 14px;
+        }
         .no-data {
-             text-align: center; 
-             padding: 40px; 
-             color: #7f8c8d; 
-            }
+            text-align: center; 
+            padding: 40px; 
+            color: #7f8c8d; 
+        }
         .error { 
             background: #f8d7da; 
             color: #721c24; 
             padding: 15px; 
             border-radius: 5px; 
             margin: 20px 0; 
+            text-align: center;
+        }
+        .date-column {
+            width: 120px;
+        }
+        .day-column {
+            width: 100px;
+        }
+        .status-column {
+            width: 100px;
         }
     </style>
 </head>
@@ -128,11 +139,9 @@ if ($result && $result->num_rows > 0) {
                     <table>
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Day</th>
-                                <th>Status</th>
-                                <th>Check In</th>
-                                <th>Check Out</th>
+                                <th class="date-column">Date</th>
+                                <th class="day-column">Day</th>
+                                <th class="status-column">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -149,8 +158,6 @@ if ($result && $result->num_rows > 0) {
                                             }
                                         ?>
                                     </td>
-                                    <td><?php echo $row['check_in'] ? $row['check_in'] : 'N/A'; ?></td>
-                                    <td><?php echo $row['check_out'] ? $row['check_out'] : 'N/A'; ?></td>
                                 </tr>
                             <?php endwhile; ?>
                         </tbody>
@@ -161,16 +168,18 @@ if ($result && $result->num_rows > 0) {
                     </div>
                 <?php else: ?>
                     <div class="no-data">
-                        <i class="fas fa-calendar-times" style="font-size: 48px; margin-bottom: 20px;"></i>
+                        <i class="fas fa-calendar-times" style="font-size: 48px; margin-bottom: 15px;"></i>
                         <h3>No Attendance Records Found</h3>
                         <p>Your attendance records will appear here once they are marked by the admin.</p>
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
 
-            <a href="../employee_dashboard.php" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Back to Dashboard
-            </a>
+            <div style="text-align: center;">
+                <a href="../employee_dashboard.php" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
         </div>
     </div>
 </body>

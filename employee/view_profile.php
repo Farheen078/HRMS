@@ -153,7 +153,7 @@ $profile_setup = !empty($profile['emp_code']);
                     
                     <div class="info-card">
                         <h3><i class="fas fa-money-bill-wave"></i> Salary</h3>
-                        <p>₹<?php echo number_format($profile['salary'], 2); ?></p>
+                        <p>Rs.<?php echo number_format($profile['salary'], 2); ?></p>
                     </div>
                     
                     <div class="info-card">

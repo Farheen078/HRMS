@@ -25,61 +25,99 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
-            margin: 0; padding: 0; box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
             font-family: Arial, sans-serif; 
         }
         body { 
-            background: #f4f4f9; padding: 20px; 
+            background: #f4f4f9; 
+            padding: 20px; 
         }
         .container {
-            max-width: 1200px; margin: 0 auto; 
+            max-width: 1200px; 
+            margin: 0 auto; 
         }
         .header {
-            background: #34495e; color: white; 
-            padding: 20px; border-radius: 10px 10px 0 0; 
+            background: #34495e; 
+            color: white; 
+            padding: 20px; 
+            border-radius: 10px 10px 0 0; 
         }
         .content {
-            background: white; padding: 20px; 
+            background: white;
+             padding: 20px; 
             border-radius: 0 0 10px 10px; 
             box-shadow: 0 0 10px rgba(0,0,0,0.1); 
         }
         table { 
-            width: 100%; border-collapse: collapse; margin-top: 20px; 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
         }
         th, td {
-            padding: 12px; text-align: left; border-bottom: 1px solid #ddd; 
+            padding: 12px; 
+            text-align: left; 
+            border-bottom: 1px solid #ddd; 
         }
         th {
-            background: #2c3e50; color: white; 
+            background: #2c3e50; 
+            color: white; 
         }
         .back-btn {
-            display: inline-block; margin-top: 20px; padding: 10px 20px; 
-            background: #95a5a6; color: white; text-decoration: none; border-radius: 5px; 
+            display: inline-block; 
+            margin-top: 20px; 
+            padding: 10px 20px; 
+            background: #95a5a6; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px; 
         }
         .no-data { 
-            text-align: center; padding: 40px; color: #7f8c8d; 
+            text-align: center; 
+            padding: 40px; 
+            color: #7f8c8d; 
         }
         .employee-count {
-            margin: 15px 0; color: #34495e; font-weight: bold;
+            margin: 15px 0; 
+            color: #34495e; 
+            font-weight: bold;
         }
         .edit-btn {
-            background: #27ae60; color: white; padding: 8px 12px;
-            border: none; border-radius: 4px; cursor: pointer; text-decoration: none;
-            font-size: 14px; display: inline-block; text-align: center;
+            background: #27ae60; 
+            color: white; 
+            padding: 8px 12px;
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            text-decoration: none;
+            font-size: 14px; 
+            display: inline-block; 
+            text-align: center;
         }
         .delete-btn {
-            background: #e74c3c; color: white; padding: 8px 12px;
-            border: none; border-radius: 4px; cursor: pointer; text-decoration: none;
-            font-size: 14px; display: inline-block; text-align: center;
+            background: #e74c3c; 
+            color: white; 
+            padding: 8px 12px;
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            text-decoration: none;
+            font-size: 14px; 
+            display: inline-block; 
+            text-align: center;
         }
         .status-approved {
-            color: #27ae60; font-weight: bold;
+            color: #27ae60; 
+            font-weight: bold;
         }
         .status-pending {
-            color: #e67e22; font-weight: bold;
+            color: #e67e22; 
+            font-weight: bold;
         }
         .action-buttons {
-            display: flex; gap: 8px;
+            display: flex; 
+            gap: 8px;
         }
     </style>
     <script>

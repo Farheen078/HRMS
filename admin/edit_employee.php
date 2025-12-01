@@ -104,21 +104,28 @@ $dept_result = $conn->query($dept_sql);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { 
-            margin: 0; padding: 0; box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
             font-family: Arial, sans-serif; 
         }
         body { 
-            background: #f4f4f9; padding: 20px; 
+            background: #f4f4f9; 
+            padding: 20px; 
         }
         .container {
-            max-width: 800px; margin: 0 auto; 
+            max-width: 800px; 
+            margin: 0 auto; 
         }
         .header {
-            background: #34495e; color: white; 
-            padding: 20px; border-radius: 10px 10px 0 0; 
+            background: #34495e; 
+            color: white; 
+            padding: 20px;
+             border-radius: 10px 10px 0 0; 
         }
         .content {
-            background: white; padding: 30px; 
+            background: white; 
+            padding: 30px; 
             border-radius: 0 0 10px 10px; 
             box-shadow: 0 0 10px rgba(0,0,0,0.1); 
         }
@@ -126,59 +133,93 @@ $dept_result = $conn->query($dept_sql);
             margin-bottom: 20px; 
         }
         label { 
-            display: block; margin-bottom: 8px; font-weight: bold; color: #2c3e50;
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: bold; 
+            color: #2c3e50;
         }
         input, select { 
-            width: 100%; padding: 12px; border: 1px solid #ddd; 
-            border-radius: 5px; font-size: 16px; 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            font-size: 16px; 
         }
         .btn { 
-            padding: 12px 25px; border: none; border-radius: 5px; 
-            cursor: pointer; font-size: 16px; margin-right: 10px;
-            text-decoration: none; display: inline-block;
+            padding: 12px 25px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            margin-right: 10px;
+            text-decoration: none; 
+            display: inline-block;
         }
         .btn-primary {
-            background: #3498db; color: white;
+            background: #3498db; 
+            color: white;
         }
         .btn-success {
-            background: #27ae60; color: white;
+            background: #27ae60; 
+            color: white;
         }
         .btn-danger {
-            background: #e74c3c; color: white;
+            background: #e74c3c; 
+            color: white;
         }
         .btn-secondary {
-            background: #95a5a6; color: white;
+            background: #95a5a6; 
+            color: white;
         }
         .message { 
-            margin: 15px 0; padding: 12px; border-radius: 5px; 
+            margin: 15px 0; 
+            padding: 12px; 
+            border-radius: 5px; 
         }
         .success {
-            background: #d4edda; color: #155724; 
+            background: #d4edda; 
+            color: #155724; 
         }
         .error { 
-            background: #f8d7da; color: #721c24; 
+            background: #f8d7da; 
+            color: #721c24; 
         }
         .form-row {
-            display: flex; gap: 20px; 
+            display: flex; 
+            gap: 20px; 
         }
         .form-row .form-group { 
             flex: 1; 
         }
         .checkbox-group {
-            display: flex; align-items: center; gap: 10px; margin: 25px 0;
-            padding: 15px; background: #f8f9fa; border-radius: 5px;
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            margin: 25px 0;
+            padding: 15px;
+             background: #f8f9fa; 
+             border-radius: 5px;
         }
         .checkbox-group input {
-            width: auto; transform: scale(1.3);
+            width: auto; 
+            transform: scale(1.3);
         }
         .user-info {
-            background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin-bottom: 20px;
         }
         .user-info h3 {
-            margin-bottom: 10px; color: #2c3e50; border-bottom: 1px solid #ddd; padding-bottom: 5px;
+            margin-bottom: 10px; 
+            color: #2c3e50; 
+            border-bottom: 1px solid #ddd; 
+            padding-bottom: 5px;
         }
         .readonly-field {
-            background: #e9ecef !important; color: #495057; cursor: not-allowed;
+            background: #e9ecef !important; 
+            color: #495057; 
+            cursor: not-allowed;
         }
     </style>
 </head>

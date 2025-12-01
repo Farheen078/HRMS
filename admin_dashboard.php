@@ -100,8 +100,6 @@ $attendance_today = $attendance_today_result->fetch_assoc()['today_count'];
             <a href="#"><i class="fa fa-file-invoice"></i><span>Manage Payslip</span></a>
             <ul>
                 <li><a href="admin/calculate_salary.php">💰 Calculate Salary</a></li>
-                <li><a href="admin/mark_salary_paid.php">✔ Mark Salary as Paid</a></li>
-                <li><a href="admin/upload_payslip.php">📂 Upload Payslip PDF</a></li>
             </ul>
         </li>
     </ul>
