@@ -1,11 +1,12 @@
 <?php
 session_start();
-include "../connect.php";
 
 if(!isset($_SESSION['user_id']) || $_SESSION['role'] != "admin"){
     header("Location: ../login.php");
     exit();
 }
+
+require_once "../connect.php";
 
 $message = "";
 
@@ -77,156 +78,263 @@ $payslips_result = $conn->query($payslips_sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mark Salary as Paid</title>
+    <link rel="stylesheet" href="../css/admindash.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: Arial, sans-serif; 
+        /* SAME dropdown menu styles as admin_dashboard.php */
+        .side-bar ul li {
+            position: relative;
         }
-        body { 
-            background: #f4f4f9; 
-            padding: 20px; 
+        .side-bar ul li ul {
+            display: none;
+            list-style: none;
+            padding-left: 20px;
+            background: #2f323a;
+            position: absolute;
+            left: 100%;
+            top: 0;
+            width: 200px;
+            z-index: 1000;
         }
-        .container {
-             max-width: 1000px; 
-             margin: 0 auto; 
-            }
-        .header { 
-            background: #34495e; 
-            color: white; 
-            padding: 20px; 
-            border-radius: 10px 10px 0 0; 
+        .side-bar ul li:hover ul {
+            display: block;
         }
-        .content { 
-            background: white; 
-            padding: 20px; 
-            border-radius: 0 0 10px 10px; 
-            box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+        .side-bar ul li ul li {
+            padding: 10px;
         }
-        table {
-             width: 100%; 
-             border-collapse: collapse; 
-             margin-top: 20px; 
-            }
-        th, td { 
-            padding: 12px; 
-            text-align: left; 
-            border-bottom: 1px solid #ddd; 
+        .side-bar ul li ul li a {
+            font-size: 14px;
         }
-        th { 
-            background: #2c3e50; 
-            color: white; 
+        
+        /* Page specific styles */
+        .page-wrapper {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
         }
-        .btn { 
-            padding: 8px 15px; 
-            border: none; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            color: white; 
-            text-decoration: none; 
-            display: inline-block; 
-            margin: 2px; 
+        
+        .page-header {
+            background: #34495e;
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 20px;
         }
+        
+        .content-container {
+            background: white;
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .salary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .salary-table th,
+        .salary-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .salary-table th {
+            background: #2c3e50;
+            color: white;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin: 2px;
+        }
+        
         .btn-paid {
-             background: #27ae60;
-             }
-        .btn-secondary { 
-            background: #95a5a6; 
+            background: #27ae60;
         }
+        
+        .btn-secondary {
+            background: #95a5a6;
+        }
+        
         .btn-primary {
-             background: #3498db; 
-            }
+            background: #3498db;
+        }
+        
         .button-group {
-             display: flex; 
-             gap: 10px; 
-             margin-top: 20px;
-             }
-        .message { 
-            margin: 20px 0; 
-            padding: 15px; 
-            border-radius: 5px; 
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
         }
-        .success { 
-            background: #d4edda; 
-            color: #155724; 
+        
+        .message {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
         }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
         .error {
-             background: #f8d7da;
-              color: #721c24; 
-            }
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
         .no-data {
-             text-align: center; 
-             padding: 40px; 
-             color: #7f8c8d; 
-            }
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .status-unpaid {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .salary-amount {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        /* Main content adjustment */
+        .main-content {
+            padding: 25px;
+            background: #f4f6f9;
+            min-height: calc(100vh - 60px);
+        }
+        .main-content h1{
+            color:white;
+        }
+        
+        .action-cell {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
+    <!-- EXACT SAME HEADER as admin_dashboard.php -->
+    <header class="header">
+        <h2 class="u-name">Admin Dashboard</h2>
+        <a href="../logout.php" class="logout-btn">Logout</a>
+    </header>
+
+    <!-- EXACT SAME CONTAINER STRUCTURE -->
     <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-money-check"></i> Mark Salary as Paid</h1>
-        </div>
-
-        <div class="content">
-            <?php if(!empty($message)): ?>
-                <div class="message <?php echo strpos($message, 'successfully') !== false ? 'success' : 'error'; ?>">
-                    <?php echo $message; ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if($payslips_result && $payslips_result->num_rows > 0): ?>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Employee</th>
-                            <th>Emp Code</th>
-                            <th>Month</th>
-                            <th>Year</th>
-                            <th>Net Salary</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php while($payslip = $payslips_result->fetch_assoc()): ?>
-                            <tr>
-                                <td><?php echo $payslip['fullname']; ?></td>
-                                <td><?php echo $payslip['emp_code']; ?></td>
-                                <td><?php echo $payslip['month']; ?></td>
-                                <td><?php echo $payslip['year']; ?></td>
-                                <td>Rs.<?php echo number_format($payslip['net_salary'], 2); ?></td>
-                                <td style="color: #e74c3c; font-weight: bold;"><?php echo $payslip['status']; ?></td>
-                                <td>
-                                    <a href="mark_salary_paid.php?mark_paid=1&payslip_id=<?php echo $payslip['id']; ?>" 
-                                       class="btn btn-paid" 
-                                       onclick="return confirm('Mark salary as paid for <?php echo $payslip['fullname']; ?>?')">
-                                        <i class="fas fa-check"></i> Mark Paid
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
-            <?php else: ?>
-                <div class="no-data">
-                    <i class="fas fa-money-bill-wave" style="font-size: 48px;"></i>
-                    <h3>No Unpaid Salaries Found</h3>
-                    <p>All salaries are marked as paid or no salary records found for approved employees.</p>
-                </div>
-            <?php endif; ?>
-
-            <div class="button-group">
-                <a href="calculate_salary.php" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Calculate Salary
-                </a>
-                
-                <a href="upload_payslip_pdf.php" class="btn btn-primary">
-                    <i class="fas fa-upload"></i> Upload Payslip
-                </a>
+        <!-- EXACT SAME SIDEBAR as admin_dashboard.php -->
+        <nav class="side-bar">
+            <div class="user-p">
+                <img src="../img/user.jpeg" alt="User">
+                <h4><?php echo $_SESSION['fullname']; ?></h4>
+                <span>(Admin)</span>
             </div>
-        </div>
+            <ul>
+                <li><a href="../admin_dashboard.php"><i class="fa fa-desktop"></i><span>Dashboard</span></a></li>
+                <li>
+                    <a href="#"><i class="fa fa-users"></i><span>Manage Employee</span></a>
+                    <ul>
+                        <li><a href="view_employee.php">👥 View Employee</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-calendar"></i><span>Manage Leaves</span></a>
+                    <ul>
+                        <li><a href="view_leaves.php">📄 View Leave Requests</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-check-square"></i><span>Manage Attendance</span></a>
+                    <ul>
+                        <li><a href="mark_attendance.php">📝 Mark Daily Attendance</a></li>
+                        <li><a href="attendance_report.php">📊 View Attendance Report</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-file-invoice"></i><span>Manage Payslip</span></a>
+                    <ul>
+                        <li><a href="calculate_salary.php">💰 Calculate Salary</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="page-wrapper">
+                <div class="page-header">
+                    <h1><i class="fas fa-money-check"></i> Mark Salary as Paid</h1>
+                </div>
+
+                <div class="content-container">
+                    <?php if(!empty($message)): ?>
+                        <div class="message <?php echo strpos($message, 'successfully') !== false ? 'success' : 'error'; ?>">
+                            <?php echo $message; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if($payslips_result && $payslips_result->num_rows > 0): ?>
+                        <table class="salary-table">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Emp Code</th>
+                                    <th>Month</th>
+                                    <th>Year</th>
+                                    <th>Net Salary</th>
+                                    <th>Status</th>
+                                    <th class="action-cell">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while($payslip = $payslips_result->fetch_assoc()): ?>
+                                    <tr>
+                                        <td><?php echo $payslip['fullname']; ?></td>
+                                        <td><?php echo $payslip['emp_code']; ?></td>
+                                        <td><?php echo $payslip['month']; ?></td>
+                                        <td><?php echo $payslip['year']; ?></td>
+                                        <td class="salary-amount">Rs.<?php echo number_format($payslip['net_salary'], 2); ?></td>
+                                        <td class="status-unpaid"><?php echo $payslip['status']; ?></td>
+                                        <td class="action-cell">
+                                            <a href="mark_salary_paid.php?mark_paid=1&payslip_id=<?php echo $payslip['id']; ?>" 
+                                               class="btn btn-paid" 
+                                               onclick="return confirm('Mark salary as paid for <?php echo $payslip['fullname']; ?>?')">
+                                                <i class="fas fa-check"></i> Mark Paid
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                    <?php else: ?>
+                        <div class="no-data">
+                            <i class="fas fa-money-bill-wave" style="font-size: 48px;"></i>
+                            <h3>No Unpaid Salaries Found</h3>
+                            <p>All salaries are marked as paid or no salary records found for approved employees.</p>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="button-group">
+                        <a href="calculate_salary.php" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Calculate Salary
+                        </a>
+                        
+                        <a href="upload_payslip_pdf.php" class="btn btn-primary">
+                            <i class="fas fa-upload"></i> Upload Payslip
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 </body>
 </html>

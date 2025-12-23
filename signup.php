@@ -7,7 +7,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $password = mysqli_real_escape_string($conn, $_POST['password']);
-    // Role is automatically set to 'employee'
 
     $checkEmail = "SELECT * FROM users WHERE email='$email'";
     $result = $conn->query($checkEmail);
@@ -15,22 +14,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows > 0) {
         $error = "Email already exists!";
     } else {
-        // Store password as plain text, set role to employee, and is_approved to 0 (pending)
-        $sql = "INSERT INTO users (fullname, email, phone, password, role, is_approved)
-                VALUES ('$fullname','$email','$phone','$password','employee', 0)";
-        
-        if ($conn->query($sql) === TRUE) {
-            $user_id = $conn->insert_id;
-            
-            // Create employee record
-            $emp_code = 'EMP' . str_pad($user_id, 3, '0', STR_PAD_LEFT);
-            $emp_sql = "INSERT INTO employees (user_id, emp_code, designation, date_of_join, salary)
-                       VALUES ('$user_id', '$emp_code', 'Employee', CURDATE(), 0)";
-            $conn->query($emp_sql);
-            
-            $success = "Your information has been saved successfully! Please wait for admin approval before you can login.";
+        if (!preg_match('/^[0-9]{10}$/', $phone)) {
+            $error = "Phone number must be exactly 10 digits!";
+        } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = "Invalid email format!";
         } else {
-            $error = "Error: " . $conn->error;
+            $sql = "INSERT INTO users (fullname, email, phone, password, role, is_approved)
+                    VALUES ('$fullname','$email','$phone','$password','employee', 0)";
+            
+            if ($conn->query($sql) === TRUE) {
+                $user_id = $conn->insert_id;
+                
+                $emp_code = 'EMP' . str_pad($user_id, 3, '0', STR_PAD_LEFT);
+                $emp_sql = "INSERT INTO employees (user_id, emp_code, designation, date_of_join, salary)
+                           VALUES ('$user_id', '$emp_code', 'Employee', CURDATE(), 0)";
+                $conn->query($emp_sql);
+                
+                $success = "Your information has been saved successfully! Please wait for admin approval before you can login.";
+            } else {
+                $error = "Error: " . $conn->error;
+            }
         }
     }
 }
@@ -112,10 +115,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
              }
         
     </style>
+    <script>
+        function validatePhone() {
+            var phone = document.getElementById('phone').value;
+            if (!/^[0-9]{10}$/.test(phone)) {
+                alert("Phone number must be exactly 10 digits!");
+                return false;
+            }
+            return true;
+        }
+        
+        function validateForm() {
+            var email = document.getElementById('email').value;
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!emailRegex.test(email)) {
+                alert("Please enter a valid email address!");
+                return false;
+            }
+            
+            return validatePhone();
+        }
+        
+        document.getElementById('phone').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
+    </script>
 </head>
 <body>
     <div class="signup-container">
-        <form action="" method="POST" class="signup-form">
+        <form action="" method="POST" class="signup-form" onsubmit="return validateForm()">
             <h1>Create Employee Account</h1>
             
             <?php if(isset($error)): ?>
@@ -139,7 +168,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="input-group">
                 <label for="phone">Phone</label>
-                <input type="text" name="phone" id="phone">
+                <input type="text" name="phone" id="phone" required maxlength="10">
             </div>
 
             <div class="input-group">

@@ -1,11 +1,12 @@
 <?php
 session_start();
-include "../connect.php";
 
 if(!isset($_SESSION['user_id']) || $_SESSION['role'] != "admin"){
     header("Location: ../login.php");
     exit();
 }
+
+require_once "../connect.php";
 
 $message = "";
 $calculated_data = [];
@@ -148,13 +149,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if($cr->num_rows == 0) {
                 // insert
-                $ins_sql = "INSERT INTO payslips (employee_id, month, year, total_salary, deduction, net_salary, status, created_at)
-                            VALUES (?, ?, ?, ?, ?, ?, 'Unpaid', NOW())";
-                $s5 = $conn->prepare($ins_sql);
-              $s5->bind_param("isiddd", $employee_id, $month_name, $year, $basic_salary, $total_deduction, $net_salary);
-
-
-                // simpler insert using escaped values
                 $esc_basic = $basic_salary;
                 $esc_ded = isset($total_deduction) ? $total_deduction : 0;
                 $esc_net = isset($net_salary) ? $net_salary : 0;
@@ -204,216 +198,311 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 $employees_sql = "SELECT e.id, u.fullname, e.emp_code FROM employees e JOIN users u ON e.user_id = u.id WHERE u.is_approved = 1";
 $employees_result = $conn->query($employees_sql);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Calculate Salary</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<style>
-/* your original styling kept unchanged */
-* { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-    font-family: Arial, sans-serif; 
-}
-body {
-     background: #f4f4f9; 
-     padding: 20px; 
-    }
-.container {
-     max-width: 800px; 
-     margin: 0 auto; 
-    }
-.header {
-     background: #34495e; 
-     color: white; 
-     padding: 20px; 
-     border-radius: 10px 10px 0 0; 
-    }
-.content {
-     background: white;
-      padding: 30px; 
-      border-radius: 0 0 10px 10px; 
-      box-shadow: 0 0 10px rgba(0,0,0,0.1); 
-    }
-.form-group { 
-    margin-bottom: 20px; 
-}
-label { 
-    display: block; 
-    margin-bottom: 8px;
-     font-weight: bold; 
-     color: #333; 
-    }
-input, select {
-     width: 100%; 
-     padding: 12px; 
-     border: 1px solid #ddd; 
-     border-radius: 5px; 
-     font-size: 16px; 
-    }
-.btn { 
-    padding: 12px 25px; 
-    border: none; 
-    border-radius: 5px; 
-    cursor: pointer; 
-    font-size: 16px; 
-    text-decoration: none; 
-    display: inline-block; 
-    margin: 5px; 
-}
-.btn-primary {
-     background: #3498db; 
-     color: white; 
-    }
-.btn-success { 
-    background: #27ae60; 
-    color: white; 
-}
-.btn-secondary {
-     background: #95a5a6; 
-     color: white; 
-    }
-.message { 
-    margin: 20px 0; 
-    padding: 15px; 
-    border-radius: 5px; 
-}
-.success {
-     background: #d4edda; 
-     color: #155724; 
-    }
-.error { 
-    background: #f8d7da;
-     color: #721c24; 
-    }
-.salary-breakdown {
-     background: #f8f9fa; 
-     padding: 20px; 
-     border-radius: 5px; 
-     margin: 20px 0; 
-    }
-.breakdown-item { 
-    display: flex; 
-    justify-content: space-between;
-     margin: 10px 0; 
-     padding: 10px; 
-     border-bottom: 1px solid #dee2e6; 
-    }
-.breakdown-total {
-     background: #e9ecef; 
-     font-weight: bold; 
-    }
-.button-group { 
-    display: flex;
-     gap: 10px;
-      margin-top: 20px; 
-    }
-.warning {
-     background: #fff3cd;
-      color: #856404; 
-      padding: 10px; 
-      border-radius: 5px; 
-      margin: 10px 0; 
-    }
-.info { 
-    background: #d1ecf1; 
-    color: #0c5460; 
-    padding: 10px; 
-    border-radius: 5px; 
-    margin: 10px 0; 
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculate Salary</title>
+    <link rel="stylesheet" href="../css/admindash.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* SAME dropdown menu styles as admin_dashboard.php */
+        .side-bar ul li {
+            position: relative;
+        }
+        .side-bar ul li ul {
+            display: none;
+            list-style: none;
+            padding-left: 20px;
+            background: #2f323a;
+            position: absolute;
+            left: 100%;
+            top: 0;
+            width: 200px;
+            z-index: 1000;
+        }
+        .side-bar ul li:hover ul {
+            display: block;
+        }
+        .side-bar ul li ul li {
+            padding: 10px;
+        }
+        .side-bar ul li ul li a {
+            font-size: 14px;
+        }
+        
+        /* Page specific styles */
+        .page-wrapper {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .page-header {
+            background: #34495e;
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 20px;
+        }
+        
+        .content-container {
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .message {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .salary-breakdown {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .breakdown-total {
+            background: #e9ecef;
+            font-weight: bold;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        /* Main content adjustment */
+        .main-content {
+            padding: 25px;
+            background: #f4f6f9;
+            min-height: calc(100vh - 60px);
+        }
+         .main-content h1{
+            color:white;
+
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
+    <!-- EXACT SAME HEADER as admin_dashboard.php -->
+    <header class="header">
+        <h2 class="u-name">Admin Dashboard</h2>
+        <a href="../logout.php" class="logout-btn">Logout</a>
+    </header>
+
+    <!-- EXACT SAME CONTAINER STRUCTURE -->
     <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-calculator"></i> Calculate Salary</h1>
-        </div>
+        <!-- EXACT SAME SIDEBAR as admin_dashboard.php -->
+        <nav class="side-bar">
+            <div class="user-p">
+                <img src="../img/user.jpeg" alt="User">
+                <h4><?php echo $_SESSION['fullname']; ?></h4>
+                <span>(Admin)</span>
+            </div>
+            <ul>
+                <li><a href="../admin_dashboard.php"><i class="fa fa-desktop"></i><span>Dashboard</span></a></li>
+                <li>
+                    <a href="#"><i class="fa fa-users"></i><span>Manage Employee</span></a>
+                    <ul>
+                        <li><a href="view_employee.php">👥 View Employee</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-calendar"></i><span>Manage Leaves</span></a>
+                    <ul>
+                        <li><a href="view_leaves.php">📄 View Leave Requests</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-check-square"></i><span>Manage Attendance</span></a>
+                    <ul>
+                        <li><a href="mark_attendance.php">📝 Mark Daily Attendance</a></li>
+                        <li><a href="attendance_report.php">📊 View Attendance Report</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-file-invoice"></i><span>Manage Payslip</span></a>
+                    <ul>
+                        <li><a href="calculate_salary.php" style="background: #1abc9c; color: white;">💰 Calculate Salary</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
 
-        <div class="content">
-            <?php if(!empty($message)): ?>
-                <div class="message <?php echo strpos($message, 'successfully') !== false ? 'success' : 'error'; ?>">
-                    <?php echo $message; ?>
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="page-wrapper">
+                <div class="page-header">
+                    <h1><i class="fas fa-calculator"></i> Calculate Salary</h1>
                 </div>
-            <?php endif; ?>
 
-            <form method="POST">
-                <div class="form-group">
-                    <label for="employee_id">Select Employee</label>
-                    <select name="employee_id" id="employee_id" required>
-                        <option value="">Select Employee</option>
-                        <?php while($emp = $employees_result->fetch_assoc()): ?>
-                            <option value="<?php echo $emp['id']; ?>"><?php echo $emp['fullname'] . ' (' . $emp['emp_code'] . ')'; ?></option>
-                        <?php endwhile; ?>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="month_year">Select Month</label>
-                    <input type="month" name="month_year" id="month_year" value="<?php echo date('Y-m'); ?>" required>
-                </div>
-
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-calculator"></i> Calculate Salary
-                </button>
-            </form>
-
-            <?php if(!empty($calculated_data)): ?>
-                <div class="salary-breakdown">
-                    <h3>Salary Breakdown for <?php echo $calculated_data['employee_name']; ?> - <?php echo $calculated_data['month']; ?></h3>
-                    
-                    <?php if($calculated_data['last_paid_at']): ?>
-                        <div class="info">
-                            <i class="fas fa-info-circle"></i> 
-                            Calculating period start: <?php echo date('d M Y', strtotime($calculated_data['last_paid_at'].' +1 day')); ?>
+                <div class="content-container">
+                    <?php if(!empty($message)): ?>
+                        <div class="message <?php echo strpos($message, 'successfully') !== false ? 'success' : 'error'; ?>">
+                            <?php echo $message; ?>
                         </div>
                     <?php endif; ?>
-                    
-                    <?php if($calculated_data['unmarked_days'] > 0): ?>
-                        <div class="warning">
-                            <i class="fas fa-exclamation-triangle"></i> 
-                            <?php echo $calculated_data['unmarked_days']; ?> unmarked days treated as absent.
+
+                    <form method="POST">
+                        <div class="form-group">
+                            <label for="employee_id">Select Employee</label>
+                            <select name="employee_id" id="employee_id" required>
+                                <option value="">Select Employee</option>
+                                <?php while($emp = $employees_result->fetch_assoc()): ?>
+                                    <option value="<?php echo $emp['id']; ?>"><?php echo $emp['fullname'] . ' (' . $emp['emp_code'] . ')'; ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="month_year">Select Month</label>
+                            <input type="month" name="month_year" id="month_year" value="<?php echo date('Y-m'); ?>" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary calculate-btn">
+                            <i class="fas fa-calculator"></i> Calculate Salary
+                        </button>
+                    </form>
+
+                    <?php if(!empty($calculated_data)): ?>
+                        <div class="salary-breakdown">
+                            <h3>Salary Breakdown for <?php echo $calculated_data['employee_name']; ?> - <?php echo $calculated_data['month']; ?></h3>
+                            
+                            <?php if($calculated_data['last_paid_at']): ?>
+                                <div class="info">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Calculating period start: <?php echo date('d M Y', strtotime($calculated_data['last_paid_at'].' +1 day')); ?>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <?php if($calculated_data['unmarked_days'] > 0): ?>
+                                <div class="warning">
+                                    <i class="fas fa-exclamation-triangle"></i> 
+                                    <?php echo $calculated_data['unmarked_days']; ?> unmarked days treated as absent.
+                                </div>
+                            <?php endif; ?>
+                            
+                            <div class="breakdown-item"><span>Working Days in Period:</span><span><?php echo $calculated_data['total_working_days']; ?> days</span></div>
+                            <div class="breakdown-item"><span>Present Days:</span><span><?php echo $calculated_data['present_days']; ?> days</span></div>
+                            <div class="breakdown-item"><span>Half Days:</span><span><?php echo $calculated_data['half_days']; ?> days</span></div>
+                            <div class="breakdown-item"><span>Marked Absent Days:</span><span><?php echo $calculated_data['absent_days']; ?> days</span></div>
+                            <?php if($calculated_data['unmarked_days'] > 0): ?>
+                                <div class="breakdown-item"><span>Unmarked Days (treated absent):</span><span><?php echo $calculated_data['unmarked_days']; ?> days</span></div>
+                            <?php endif; ?>
+                            
+                            <div class="breakdown-item"><span>Basic Salary:</span><span>Rs.<?php echo number_format($calculated_data['basic_salary'], 2); ?></span></div>
+                            <div class="breakdown-item"><span>Total Deduction:</span><span>Rs.<?php echo number_format($calculated_data['total_deduction'], 2); ?></span></div>
+                            <div class="breakdown-item"><span>Salary for this period (earned):</span><span>Rs.<?php echo number_format($calculated_data['salary_for_period'], 2); ?></span></div>
+
+                            <div class="breakdown-item breakdown-total" style="background: #d4edda;">
+                                <span>Net Payable Salary (Excluding Tax):</span>
+                                <span style="color: #155724; font-size: 1.2em;">Rs.<?php echo number_format($calculated_data['net_salary'], 2); ?></span>
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <a href="../admin_dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+                            <?php if($calculated_data['net_salary'] > 0): ?>
+                                <a href="mark_salary_paid.php?employee_id=<?php echo $employee_id; ?>&month=<?php echo urlencode($calculated_data['month']); ?>" class="btn btn-success"><i class="fas fa-money-check"></i> Mark Salary Paid</a>
+                            <?php endif; ?>
                         </div>
                     <?php endif; ?>
-                    
-                    <?php if($calculated_data['paid_salary'] > 0): ?>
-                        <div class="info">
-                            <i class="fas fa-info-circle"></i> 
-                            Already Paid: Rs.<?php echo number_format($calculated_data['paid_salary'], 2); ?> | 
-                            Remaining Salary: Rs.<?php echo number_format($calculated_data['remaining_salary'], 2); ?>
-                        </div>
-                    <?php endif; ?>
-                    
-                    <div class="breakdown-item"><span>Working Days in Period:</span><span><?php echo $calculated_data['total_working_days']; ?> days</span></div>
-                    <div class="breakdown-item"><span>Present Days:</span><span><?php echo $calculated_data['present_days']; ?> days</span></div>
-                    <div class="breakdown-item"><span>Half Days:</span><span><?php echo $calculated_data['half_days']; ?> days</span></div>
-                    <div class="breakdown-item"><span>Marked Absent Days:</span><span><?php echo $calculated_data['absent_days']; ?> days</span></div>
-                    <?php if($calculated_data['unmarked_days'] > 0): ?>
-                        <div class="breakdown-item"><span>Unmarked Days (treated absent):</span><span><?php echo $calculated_data['unmarked_days']; ?> days</span></div>
-                    <?php endif; ?>
-                    
-                    <div class="breakdown-item"><span>Basic Salary:</span><span>Rs.<?php echo number_format($calculated_data['basic_salary'], 2); ?></span></div>
-                    <div class="breakdown-item"><span>Total Deduction:</span><span>Rs.<?php echo number_format($calculated_data['total_deduction'], 2); ?></span></div>
-                    <div class="breakdown-item"><span>Salary for this period (earned):</span><span>Rs.<?php echo number_format($calculated_data['salary_for_period'], 2); ?></span></div>
-
-                    <div class="breakdown-item breakdown-total" style="background: #d4edda;">
-                        <span>Net Payable Salary (this calculation):</span>
-                        <span style="color: #155724; font-size: 1.2em;">Rs.<?php echo number_format($calculated_data['net_salary'], 2); ?></span>
-                    </div>
                 </div>
-
-                <div class="button-group">
-                    <a href="../admin_dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
-                    <?php if($calculated_data['net_salary'] > 0): ?>
-                        <a href="mark_salary_paid.php?employee_id=<?php echo $employee_id; ?>&month=<?php echo urlencode($calculated_data['month']); ?>" class="btn btn-success"><i class="fas fa-money-check"></i> Mark Salary Paid</a>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
-        </div>
+            </div>
+        </main>
     </div>
 </body>
 </html>
